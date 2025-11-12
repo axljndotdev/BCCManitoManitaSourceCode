@@ -1,41 +1,102 @@
-import { useState, useEffect } from "react";
+
+import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Gift, LogOut, Sparkles, User, Tag, Heart } from "lucide-react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Confetti } from "@/components/confetti";
+import { Gift, LogOut, Sparkles } from "lucide-react";
+import Confetti from "@/components/confetti";
+
+interface Participant {
+  id: number;
+  pin: string;
+  fullName: string;
+  codename: string;
+  gender: string;
+  wishlist: string;
+  approved: boolean;
+  hasDrawn: boolean;
+  assignedToPin?: string | null;
+  assignedToCodename?: string | null;
+}
+
+interface AssignedMatch {
+  fullName: string;
+  codename: string;
+  gender: string;
+  wishlist: string;
+}
 
 export default function Dashboard() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
-  const [hasDrawn, setHasDrawn] = useState(false);
+  const [participant, setParticipant] = useState<Participant | null>(null);
+  const [assignedManito, setAssignedManito] = useState<AssignedMatch | null>(null);
   const [showConfetti, setShowConfetti] = useState(false);
-  const [isApproved] = useState(true); // Mock - will be from API
-  const [drawEnabled] = useState(true); // Mock - will be from API
-  
-  // Mock participant data - will be from API in Task 3
-  const [participant] = useState({
-    fullName: "Maria Santos",
-    codename: "JoyfulStar",
-    gender: "Female",
-    wishlist: "Bible, Coffee mug, Planner, Scarf",
-    pin: localStorage.getItem("currentPin") || "MM-1234",
-  });
-
-  const [assignedManito, setAssignedManito] = useState<{
-    codename: string;
-    wishlist: string;
-    gender: string;
-  } | null>(null);
+  const [drawEnabled, setDrawEnabled] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [drawing, setDrawing] = useState(false);
 
   useEffect(() => {
     const pin = localStorage.getItem("currentPin");
-    if (!pin || localStorage.getItem("isAdmin") === "true") {
+    const isAdmin = localStorage.getItem("isAdmin") === "true";
+    
+    if (!pin || isAdmin) {
       setLocation("/login");
+      return;
     }
+
+    fetchData(pin);
   }, [setLocation]);
+
+  const fetchData = async (pin: string) => {
+    try {
+      setLoading(true);
+
+      // Fetch participant data
+      const participantRes = await fetch(`/api/participant/${pin}`);
+      const participantData = await participantRes.json();
+
+      if (!participantData.success) {
+        throw new Error(participantData.message);
+      }
+
+      setParticipant(participantData.participant);
+
+      // If already drawn, fetch the match details
+      if (participantData.participant.hasDrawn && participantData.participant.assignedToPin) {
+        const matchRes = await fetch(`/api/participant/${participantData.participant.assignedToPin}`);
+        const matchData = await matchRes.json();
+        
+        if (matchData.success) {
+          setAssignedManito({
+            fullName: matchData.participant.fullName,
+            codename: matchData.participant.codename,
+            gender: matchData.participant.gender,
+            wishlist: matchData.participant.wishlist,
+          });
+        }
+      }
+
+      // Fetch settings
+      const settingsRes = await fetch("/api/admin/settings");
+      const settingsData = await settingsRes.json();
+
+      if (settingsData.success) {
+        setDrawEnabled(settingsData.settings.drawEnabled);
+      }
+    } catch (error: any) {
+      console.error("Failed to fetch data:", error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to load dashboard",
+        variant: "destructive",
+      });
+      setLocation("/login");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleLogout = () => {
     localStorage.removeItem("currentPin");
@@ -47,30 +108,42 @@ export default function Dashboard() {
   };
 
   const handleDraw = async () => {
+    if (!participant) return;
+
     try {
-      // Mock draw - will be connected to backend in Task 3
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      setDrawing(true);
 
-      const mockManito = {
-        codename: "BrightHeart",
-        wishlist: "Devotional book, Tumbler, Socks",
-        gender: "Male",
-      };
+      const res = await fetch("/api/draw", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ pin: participant.pin }),
+      });
 
-      setAssignedManito(mockManito);
-      setHasDrawn(true);
+      const data = await res.json();
+
+      if (!data.success) {
+        throw new Error(data.message);
+      }
+
+      setAssignedManito(data.match);
+      setParticipant({ ...participant, hasDrawn: true });
       setShowConfetti(true);
 
       toast({
         title: "You've drawn your Manito/Manita!",
         description: "Keep it a secret until Christmas!",
       });
-    } catch (error) {
+
+      // Hide confetti after 5 seconds
+      setTimeout(() => setShowConfetti(false), 5000);
+    } catch (error: any) {
       toast({
         title: "Draw Failed",
-        description: "Please try again",
+        description: error.message || "Please try again",
         variant: "destructive",
       });
+    } finally {
+      setDrawing(false);
     }
   };
 
@@ -78,193 +151,143 @@ export default function Dashboard() {
     return wishlist.split(',').map(item => item.trim()).filter(item => item.length > 0);
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-red-50 via-green-50 to-blue-50 flex items-center justify-center">
+        <div className="text-lg">Loading...</div>
+      </div>
+    );
+  }
+
+  if (!participant) {
+    return null;
+  }
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
+    <div className="min-h-screen bg-gradient-to-br from-red-50 via-green-50 to-blue-50">
       {showConfetti && <Confetti />}
-      
-      <header className="border-b bg-card/80 backdrop-blur-sm sticky top-0 z-10 h-16 shadow-md">
-        <div className="max-w-4xl mx-auto px-4 h-full flex items-center justify-between gap-4">
+
+      <header className="sticky top-0 z-10 h-16 border-b bg-white/80 backdrop-blur-sm shadow-sm">
+        <div className="container mx-auto h-full px-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-primary" data-testid="icon-header-sparkles" />
-            <h1 className="text-lg font-semibold" data-testid="text-header-title">Manito-Manita</h1>
+            <Gift className="h-6 w-6 text-red-600" />
+            <h1 className="text-xl font-bold">Manito Manita</h1>
           </div>
-          <Button
-            variant="ghost"
-            className="h-12"
-            onClick={handleLogout}
-            data-testid="button-logout"
-          >
-            <LogOut className="w-4 h-4 mr-2" />
+          <Button variant="ghost" size="sm" onClick={handleLogout}>
+            <LogOut className="h-4 w-4 mr-2" />
             Logout
           </Button>
         </div>
       </header>
 
-      <main className="max-w-2xl mx-auto px-4 py-8 space-y-6">
-        {/* Profile Card */}
+      <main className="container mx-auto px-4 py-8 max-w-2xl space-y-6">
         <Card className="rounded-2xl">
-          <CardHeader className="p-6">
-            <div className="flex items-center justify-between gap-4 flex-wrap">
-              <CardTitle className="text-2xl">Your Profile</CardTitle>
-              {isApproved ? (
-                <Badge variant="default" className="bg-accent text-accent-foreground" data-testid="badge-status">
-                  Approved
-                </Badge>
-              ) : (
-                <Badge variant="secondary" data-testid="badge-status">Pending Approval</Badge>
-              )}
-            </div>
+          <CardHeader>
+            <CardTitle className="text-2xl">Your Profile</CardTitle>
+            <CardDescription>Your Manito Manita information</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-6 px-6 pb-6">
-            <div className="grid gap-6">
-              <div className="flex items-start gap-4">
-                <div className="w-10 h-10 bg-muted rounded-lg flex items-center justify-center flex-shrink-0">
-                  <User className="w-5 h-5 text-muted-foreground" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-muted-foreground mb-1">Full Name</p>
-                  <p className="text-base font-medium" data-testid="text-full-name">
-                    {participant.fullName}
-                  </p>
-                </div>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Full Name</p>
+                <p className="font-medium">{participant.fullName}</p>
               </div>
-
-              <div className="flex items-start gap-4">
-                <div className="w-10 h-10 bg-muted rounded-lg flex items-center justify-center flex-shrink-0">
-                  <Tag className="w-5 h-5 text-muted-foreground" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-muted-foreground mb-1">Codename</p>
-                  <p className="text-base font-medium" data-testid="text-codename">
-                    {participant.codename}
-                  </p>
-                </div>
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Codename</p>
+                <p className="font-medium">{participant.codename}</p>
               </div>
-
-              <div className="flex items-start gap-4">
-                <div className="w-10 h-10 bg-muted rounded-lg flex items-center justify-center flex-shrink-0">
-                  <Heart className="w-5 h-5 text-muted-foreground" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-muted-foreground mb-2">Your Wishlist</p>
-                  <ul className="space-y-1" data-testid="list-wishlist">
-                    {parseWishlist(participant.wishlist).map((item, index) => (
-                      <li key={index} className="text-base flex items-start gap-2">
-                        <span className="text-primary mt-1.5">•</span>
-                        <span>{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Gender</p>
+                <p className="font-medium">{participant.gender}</p>
               </div>
-
-              <div className="flex items-start gap-4">
-                <div className="w-10 h-10 bg-muted rounded-lg flex items-center justify-center flex-shrink-0">
-                  <Tag className="w-5 h-5 text-muted-foreground" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-muted-foreground mb-1">Your PIN</p>
-                  <p className="text-base font-mono font-medium" data-testid="text-pin">
-                    {participant.pin}
-                  </p>
-                </div>
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Status</p>
+                <p className="font-medium">
+                  {participant.approved ? (
+                    <span className="text-green-600">✓ Approved</span>
+                  ) : (
+                    <span className="text-yellow-600">Pending Approval</span>
+                  )}
+                </p>
               </div>
+            </div>
+            <div>
+              <p className="text-sm font-medium text-muted-foreground mb-2">Your Wishlist</p>
+              <p className="text-sm">{participant.wishlist}</p>
             </div>
           </CardContent>
         </Card>
 
-        {/* Draw Card */}
-        {isApproved && !hasDrawn && drawEnabled && (
-          <Card className="rounded-2xl border-2 border-primary/40 bg-gradient-to-br from-primary/10 via-primary/5 to-background shadow-lg">
-            <CardHeader className="text-center p-8">
-              <div className="mx-auto w-16 h-16 bg-gradient-to-br from-primary/30 to-primary/10 rounded-full flex items-center justify-center mb-4">
-                <Gift className="w-8 h-8 text-primary" data-testid="icon-draw-gift" />
-              </div>
-              <CardTitle className="text-2xl">Ready to Draw?</CardTitle>
-              <CardDescription className="text-base">
-                Click below to discover your Manito/Manita
+        {!participant.approved && (
+          <Card className="rounded-2xl border-yellow-200 bg-yellow-50">
+            <CardContent className="py-6">
+              <p className="text-center text-sm">
+                Your registration is pending approval. Please wait for the admin to approve your account.
+              </p>
+            </CardContent>
+          </Card>
+        )}
+
+        {participant.approved && !participant.hasDrawn && (
+          <Card className="rounded-2xl">
+            <CardHeader>
+              <CardTitle className="text-2xl text-center">Draw Your Manito/Manita</CardTitle>
+              <CardDescription className="text-center">
+                Click the button below to discover who you'll be giving gifts to!
               </CardDescription>
             </CardHeader>
-            <CardContent className="px-8 pb-8">
-              <Button
-                onClick={handleDraw}
-                size="lg"
-                className="w-full h-16 text-lg font-semibold animate-pulse hover:animate-none shadow-lg"
-                data-testid="button-draw"
-              >
-                <Gift className="w-6 h-6 mr-2" />
-                Draw My Manito/Manita
-              </Button>
+            <CardContent className="flex justify-center py-6">
+              {drawEnabled ? (
+                <Button
+                  size="lg"
+                  className="h-16 px-12 text-lg rounded-xl"
+                  onClick={handleDraw}
+                  disabled={drawing}
+                >
+                  <Gift className="h-6 w-6 mr-2" />
+                  {drawing ? "Drawing..." : "Draw Now!"}
+                </Button>
+              ) : (
+                <div className="text-center text-muted-foreground">
+                  <p className="text-sm">Drawing is currently disabled by the admin.</p>
+                  <p className="text-sm">Please check back later.</p>
+                </div>
+              )}
             </CardContent>
           </Card>
         )}
 
-        {/* Draw Not Enabled */}
-        {isApproved && !hasDrawn && !drawEnabled && (
-          <Card className="rounded-2xl bg-gradient-to-br from-muted/50 to-background">
-            <CardContent className="py-12 text-center px-6">
-              <div className="w-20 h-20 bg-gradient-to-br from-muted to-muted/50 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Gift className="w-10 h-10 text-muted-foreground" data-testid="icon-gift-disabled" />
+        {participant.hasDrawn && assignedManito && (
+          <Card className="rounded-2xl border-green-200 bg-gradient-to-br from-green-50 to-blue-50">
+            <CardHeader className="text-center">
+              <div className="flex justify-center mb-2">
+                <Sparkles className="h-8 w-8 text-yellow-500" />
               </div>
-              <p className="text-lg font-semibold mb-2" data-testid="text-draw-disabled-title">Drawing Not Yet Open</p>
-              <p className="text-muted-foreground" data-testid="text-draw-disabled-desc">
-                Wait for the admin to enable the draw
-              </p>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Not Approved */}
-        {!isApproved && (
-          <Card className="rounded-2xl bg-gradient-to-br from-accent/10 to-background">
-            <CardContent className="py-12 text-center px-6">
-              <div className="w-20 h-20 bg-gradient-to-br from-accent/20 to-accent/5 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Sparkles className="w-10 h-10 text-accent-foreground" data-testid="icon-pending" />
-              </div>
-              <p className="text-lg font-semibold mb-2" data-testid="text-pending-title">Waiting for Approval</p>
-              <p className="text-muted-foreground" data-testid="text-pending-desc">
-                Your registration is pending admin approval
-              </p>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Result Card */}
-        {hasDrawn && assignedManito && (
-          <Card className="rounded-2xl border-2 border-primary/50 bg-gradient-to-br from-primary/10 via-primary/5 to-background shadow-xl">
-            <CardHeader className="text-center space-y-4 p-8">
-              <div className="mx-auto w-20 h-20 bg-gradient-to-br from-primary/30 to-primary/10 rounded-full flex items-center justify-center">
-                <Gift className="w-10 h-10 text-primary" data-testid="icon-result-gift" />
-              </div>
-              <CardTitle className="text-2xl" data-testid="text-result-title">
-                Your {assignedManito.gender === "Male" ? "Manito" : "Manita"} is
-              </CardTitle>
+              <CardTitle className="text-3xl">Your Manito/Manita is...</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-6 px-8 pb-8">
-              <div className="text-center p-6 bg-background/50 rounded-xl border border-primary/20">
-                <p className="text-sm font-medium text-muted-foreground mb-3">Codename</p>
-                <p className="text-3xl font-bold text-primary" data-testid="text-assigned-codename">
+            <CardContent className="space-y-4">
+              <div className="text-center py-4">
+                <p className="text-4xl font-bold text-primary mb-2">
                   {assignedManito.codename}
                 </p>
+                <p className="text-muted-foreground">{assignedManito.gender}</p>
               </div>
 
-              <div className="p-6 bg-background/50 rounded-xl border">
-                <p className="text-sm font-medium text-muted-foreground mb-4">
-                  {assignedManito.gender === "Male" ? "His" : "Her"} Wishlist
-                </p>
-                <ul className="space-y-2" data-testid="list-assigned-wishlist">
+              <div className="border-t pt-4">
+                <p className="font-semibold mb-3 text-center">Their Wishlist:</p>
+                <ul className="space-y-2">
                   {parseWishlist(assignedManito.wishlist).map((item, index) => (
-                    <li key={index} className="text-base flex items-start gap-2">
-                      <span className="text-primary mt-1.5">•</span>
+                    <li key={index} className="flex items-start gap-2">
+                      <span className="text-green-600 mt-1">🎁</span>
                       <span>{item}</span>
                     </li>
                   ))}
                 </ul>
               </div>
 
-              <div className="p-6 bg-accent/30 rounded-xl border border-accent-border text-center">
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  Keep it a secret until Christmas reveal day!
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mt-4">
+                <p className="text-sm text-center font-medium text-yellow-800">
+                  🤫 Remember: Keep this a secret until Christmas!
                 </p>
               </div>
             </CardContent>

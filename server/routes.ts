@@ -211,6 +211,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Admin middleware
+  const verifyAdmin = async (req: any, res: any, next: any) => {
+    const adminPin = req.headers['x-admin-pin'];
+    
+    if (!adminPin) {
+      return res.status(401).json({ 
+        success: false, 
+        message: "Admin authentication required" 
+      });
+    }
+    
+    const isValid = await storage.verifyAdminPin(adminPin as string);
+    if (!isValid) {
+      return res.status(401).json({ 
+        success: false, 
+        message: "Invalid admin PIN" 
+      });
+    }
+    
+    next();
+  };
+
   // Get All Participants (Admin)
   app.get("/api/admin/participants", async (req, res) => {
     try {
