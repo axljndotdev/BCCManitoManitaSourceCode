@@ -9,6 +9,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/register", async (req, res) => {
     try {
       const validatedData = insertParticipantSchema.parse(req.body);
+      
+      // Check if PIN already exists
+      const existingParticipant = await storage.getParticipantByPin(validatedData.pin);
+      if (existingParticipant) {
+        return res.status(400).json({ 
+          success: false, 
+          message: "This PIN is already taken. Please choose a different one." 
+        });
+      }
+      
       const participant = await storage.createParticipant(validatedData);
       
       res.json({ 

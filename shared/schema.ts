@@ -26,7 +26,6 @@ export const adminSettings = pgTable("admin_settings", {
 // Zod schemas for validation
 export const insertParticipantSchema = createInsertSchema(participants).omit({
   id: true,
-  pin: true,
   approved: true,
   hasDrawn: true,
   assignedToPin: true,
@@ -35,6 +34,7 @@ export const insertParticipantSchema = createInsertSchema(participants).omit({
   codename: z.string().min(2, "Codename must be at least 2 characters"),
   gender: z.enum(["Male", "Female", "Other"]),
   wishlist: z.string().min(5, "Please add at least one wish item"),
+  pin: z.string().min(4, "PIN must be at least 4 characters").max(10, "PIN must not exceed 10 characters"),
 });
 
 export const loginSchema = z.object({

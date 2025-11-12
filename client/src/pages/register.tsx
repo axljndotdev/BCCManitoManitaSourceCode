@@ -25,6 +25,7 @@ export default function Register() {
       codename: "",
       gender: "Male",
       wishlist: "",
+      pin: "",
     },
   });
 
@@ -43,12 +44,10 @@ export default function Register() {
   const onSubmit = async (data: InsertParticipant) => {
     try {
       // Mock registration - will be connected to backend in Task 3
-      const mockPin = `MM-${Math.floor(1000 + Math.random() * 9000)}`;
-      
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 800));
       
-      setRegisteredPin(mockPin);
+      setRegisteredPin(data.pin);
       
       toast({
         title: "Registration Successful!",
@@ -172,6 +171,27 @@ export default function Register() {
                       />
                     </FormControl>
                     <FormMessage data-testid="error-codename" />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="pin"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Create Your PIN</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="MM-1234"
+                        className="h-12 font-mono"
+                        {...field}
+                        data-testid="input-pin"
+                        maxLength={10}
+                      />
+                    </FormControl>
+                    <p className="text-sm text-muted-foreground">Choose a memorable PIN (4-10 characters)</p>
+                    <FormMessage data-testid="error-pin" />
                   </FormItem>
                 )}
               />
