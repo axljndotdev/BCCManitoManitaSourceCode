@@ -1,68 +1,90 @@
-import { useEffect, useState } from "react";
 
-interface ConfettiPiece {
-  id: number;
-  left: string;
-  delay: string;
-  duration: string;
-  color: string;
+import { useEffect, useRef } from 'react';
+
+interface ConfettiProps {
+  active?: boolean;
 }
 
-export function Confetti() {
-  const [pieces, setPieces] = useState<ConfettiPiece[]>([]);
+export default function Confetti({ active = true }: ConfettiProps) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    const colors = ['hsl(var(--primary))', 'hsl(var(--accent-foreground))', 'hsl(var(--chart-3))'];
-    const newPieces: ConfettiPiece[] = [];
+    if (!active || !canvasRef.current) return;
 
-    for (let i = 0; i < 30; i++) {
-      newPieces.push({
-        id: i,
-        left: `${Math.random() * 100}%`,
-        delay: `${Math.random() * 0.5}s`,
-        duration: `${2 + Math.random() * 1}s`,
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const particles: Array<{
+      x: number;
+      y: number;
+      vx: number;
+      vy: number;
+      color: string;
+      rotation: number;
+      rotationSpeed: number;
+    }> = [];
+
+    const colors = ['#e53e3e', '#38a169', '#3182ce', '#d69e2e', '#805ad5'];
+
+    for (let i = 0; i < 100; i++) {
+      particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height - canvas.height,
+        vx: Math.random() * 2 - 1,
+        vy: Math.random() * 3 + 2,
         color: colors[Math.floor(Math.random() * colors.length)],
+        rotation: Math.random() * 360,
+        rotationSpeed: Math.random() * 10 - 5,
       });
     }
 
-    setPieces(newPieces);
+    let animationId: number;
 
-    // Remove confetti after animation
-    const timeout = setTimeout(() => {
-      setPieces([]);
-    }, 3500);
+    function animate() {
+      if (!ctx || !canvas) return;
+      
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    return () => clearTimeout(timeout);
-  }, []);
+      particles.forEach((p) => {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.rotation += p.rotationSpeed;
 
-  if (pieces.length === 0) return null;
+        if (p.y > canvas.height) {
+          p.y = -10;
+          p.x = Math.random() * canvas.width;
+        }
+
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate((p.rotation * Math.PI) / 180);
+        ctx.fillStyle = p.color;
+        ctx.fillRect(-5, -5, 10, 10);
+        ctx.restore();
+      });
+
+      animationId = requestAnimationFrame(animate);
+    }
+
+    animate();
+
+    return () => {
+      if (animationId) {
+        cancelAnimationFrame(animationId);
+      }
+    };
+  }, [active]);
+
+  if (!active) return null;
 
   return (
-    <div className="fixed inset-0 pointer-events-none z-50 overflow-hidden">
-      {pieces.map((piece) => (
-        <div
-          key={piece.id}
-          className="absolute w-2 h-2 opacity-70 animate-fall"
-          style={{
-            left: piece.left,
-            top: '-10px',
-            backgroundColor: piece.color,
-            animationDelay: piece.delay,
-            animationDuration: piece.duration,
-          }}
-        />
-      ))}
-      <style>{`
-        @keyframes fall {
-          to {
-            transform: translateY(100vh) rotate(360deg);
-            opacity: 0;
-          }
-        }
-        .animate-fall {
-          animation: fall linear forwards;
-        }
-      `}</style>
-    </div>
+    <canvas
+      ref={canvasRef}
+      className="fixed inset-0 pointer-events-none z-50"
+    />
   );
 }
