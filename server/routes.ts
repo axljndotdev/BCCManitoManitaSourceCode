@@ -66,6 +66,51 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Update Participant Profile
+  app.put("/api/participant/update", async (req, res) => {
+    try {
+      const { pin, fullName, codename, gender, wishlist } = req.body;
+      
+      if (!pin) {
+        return res.status(400).json({ 
+          success: false, 
+          message: "PIN is required" 
+        });
+      }
+
+      const participant = await storage.getParticipantByPin(pin);
+      
+      if (!participant) {
+        return res.status(404).json({ 
+          success: false, 
+          message: "Participant not found" 
+        });
+      }
+
+      // Check if drawing is already enabled
+      const settings = await storage.getAdminSettings();
+      if (settings.drawEnabled) {
+        return res.status(403).json({ 
+          success: false, 
+          message: "Cannot edit profile after drawing has started" 
+        });
+      }
+
+      await storage.updateParticipant(pin, { fullName, codename, gender, wishlist });
+      
+      res.json({ 
+        success: true, 
+        message: "Profile updated successfully" 
+      });
+    } catch (error) {
+      console.error("Update participant error:", error);
+      res.status(500).json({ 
+        success: false, 
+        message: "Failed to update profile" 
+      });
+    }
+  });
+
   // Get Participant Data (by PIN)
   app.get("/api/participant/:pin", async (req, res) => {
     try {
@@ -300,6 +345,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ 
         success: false, 
         message: "Failed to toggle draw" 
+      });
+    }
+  });
+
+  // Reset All Draws (Admin)
+  app.post("/api/admin/reset-draws", async (req, res) => {
+    try {
+      await storage.resetAllDraws();
+      res.json({ 
+        success: true, 
+        message: "All draws have been reset" 
+      });
+    } catch (error) {
+      console.error("Reset draws error:", error);
+      res.status(500).json({ 
+        success: false, 
+        message: "Failed to reset draws" 
       });
     }
   });

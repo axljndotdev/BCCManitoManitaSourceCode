@@ -14,11 +14,13 @@ export interface IStorage {
   rejectParticipant(pin: string): Promise<void>;
   getAvailableForDraw(currentPin: string): Promise<Participant[]>;
   assignMatch(fromPin: string, toPin: string): Promise<void>;
+  updateParticipant(pin: string, updates: Partial<InsertParticipant>): Promise<void>;
   
   // Admin methods
   getAdminSettings(): Promise<AdminSettings>;
   toggleDrawEnabled(): Promise<boolean>;
   verifyAdminPin(pin: string): Promise<boolean>;
+  resetAllDraws(): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -110,6 +112,13 @@ export class DatabaseStorage implements IStorage {
       .where(eq(participants.pin, fromPin));
   }
 
+  async updateParticipant(pin: string, updates: Partial<InsertParticipant>): Promise<void> {
+    await db
+      .update(participants)
+      .set(updates)
+      .where(eq(participants.pin, pin));
+  }
+
   // Admin methods
   async getAdminSettings(): Promise<AdminSettings> {
     // Ensure singleton admin settings exists
@@ -141,6 +150,15 @@ export class DatabaseStorage implements IStorage {
   async verifyAdminPin(pin: string): Promise<boolean> {
     const settings = await this.getAdminSettings();
     return settings.adminPin === pin;
+  }
+
+  async resetAllDraws(): Promise<void> {
+    await db
+      .update(participants)
+      .set({ 
+        hasDrawn: false,
+        assignedToPin: null
+      });
   }
 }
 

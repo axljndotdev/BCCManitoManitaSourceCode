@@ -3,8 +3,13 @@ import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { Gift, LogOut, Sparkles } from "lucide-react";
+import { Gift, LogOut, Sparkles, Edit } from "lucide-react";
 import Confetti from "@/components/confetti";
 
 interface Participant {
@@ -36,6 +41,13 @@ export default function Dashboard() {
   const [drawEnabled, setDrawEnabled] = useState(false);
   const [loading, setLoading] = useState(true);
   const [drawing, setDrawing] = useState(false);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [editForm, setEditForm] = useState({
+    fullName: "",
+    codename: "",
+    gender: "Male",
+    wishlist: "",
+  });
 
   useEffect(() => {
     const pin = localStorage.getItem("currentPin");
@@ -62,6 +74,12 @@ export default function Dashboard() {
       }
 
       setParticipant(participantData.participant);
+      setEditForm({
+        fullName: participantData.participant.fullName,
+        codename: participantData.participant.codename,
+        gender: participantData.participant.gender,
+        wishlist: participantData.participant.wishlist,
+      });
 
       // If already drawn, fetch the match details
       if (participantData.participant.hasDrawn && participantData.participant.assignedToPin) {
@@ -147,6 +165,41 @@ export default function Dashboard() {
     }
   };
 
+  const handleUpdateProfile = async () => {
+    if (!participant) return;
+
+    try {
+      const res = await fetch("/api/participant/update", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          pin: participant.pin,
+          ...editForm,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!data.success) {
+        throw new Error(data.message);
+      }
+
+      setParticipant({ ...participant, ...editForm });
+      setEditDialogOpen(false);
+
+      toast({
+        title: "Profile Updated",
+        description: "Your details have been updated successfully",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Update Failed",
+        description: error.message || "Please try again",
+        variant: "destructive",
+      });
+    }
+  };
+
   const parseWishlist = (wishlist: string) => {
     return wishlist.split(',').map(item => item.trim()).filter(item => item.length > 0);
   };
@@ -183,8 +236,73 @@ export default function Dashboard() {
       <main className="container mx-auto px-4 py-8 max-w-2xl space-y-6">
         <Card className="rounded-2xl">
           <CardHeader>
-            <CardTitle className="text-2xl">Your Profile</CardTitle>
-            <CardDescription>Your Manito Manita information</CardDescription>
+            <div className="flex items-start justify-between">
+              <div>
+                <CardTitle className="text-2xl">Your Profile</CardTitle>
+                <CardDescription>Your Manito Manita information</CardDescription>
+              </div>
+              {!drawEnabled && participant.approved && (
+                <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button variant="outline" size="sm">
+                      <Edit className="h-4 w-4 mr-2" />
+                      Edit
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Edit Your Profile</DialogTitle>
+                      <DialogDescription>
+                        Update your information before drawing starts
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-4 py-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="edit-fullName">Full Name</Label>
+                        <Input
+                          id="edit-fullName"
+                          value={editForm.fullName}
+                          onChange={(e) => setEditForm({ ...editForm, fullName: e.target.value })}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="edit-codename">Codename</Label>
+                        <Input
+                          id="edit-codename"
+                          value={editForm.codename}
+                          onChange={(e) => setEditForm({ ...editForm, codename: e.target.value })}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="edit-gender">Gender</Label>
+                        <Select value={editForm.gender} onValueChange={(value) => setEditForm({ ...editForm, gender: value })}>
+                          <SelectTrigger id="edit-gender">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Male">Male</SelectItem>
+                            <SelectItem value="Female">Female</SelectItem>
+                            <SelectItem value="Other">Other</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="edit-wishlist">Wishlist</Label>
+                        <Textarea
+                          id="edit-wishlist"
+                          value={editForm.wishlist}
+                          onChange={(e) => setEditForm({ ...editForm, wishlist: e.target.value })}
+                          rows={4}
+                        />
+                      </div>
+                      <Button onClick={handleUpdateProfile} className="w-full">
+                        Save Changes
+                      </Button>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              )}
+            </div>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-2 gap-4">

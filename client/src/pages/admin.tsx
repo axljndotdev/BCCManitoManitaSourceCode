@@ -163,6 +163,37 @@ export default function Admin() {
     }
   };
 
+  const handleResetDraws = async () => {
+    if (!confirm("Are you sure you want to reset all draws? This will allow everyone to draw again.")) {
+      return;
+    }
+
+    try {
+      const res = await fetch("/api/admin/reset-draws", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        await fetchData();
+        toast({
+          title: "Draws Reset",
+          description: "All participants can now draw again",
+        });
+      } else {
+        throw new Error(data.message);
+      }
+    } catch (error: any) {
+      toast({
+        title: "Reset Failed",
+        description: error.message || "Please try again",
+        variant: "destructive",
+      });
+    }
+  };
+
   const pendingParticipants = participants.filter((p) => !p.approved);
   const approvedParticipants = participants.filter((p) => p.approved);
   const drawnCount = participants.filter((p) => p.hasDrawn).length;
@@ -332,17 +363,33 @@ export default function Admin() {
                   />
                 </div>
 
-                <div className="pt-4 border-t">
-                  <h3 className="font-medium mb-2">Statistics</h3>
-                  <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div>
-                      <p className="text-muted-foreground">Total Participants</p>
-                      <p className="text-2xl font-bold">{participants.length}</p>
+                <div className="pt-4 border-t space-y-4">
+                  <div>
+                    <h3 className="font-medium mb-2">Statistics</h3>
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                      <div>
+                        <p className="text-muted-foreground">Total Participants</p>
+                        <p className="text-2xl font-bold">{participants.length}</p>
+                      </div>
+                      <div>
+                        <p className="text-muted-foreground">Have Drawn</p>
+                        <p className="text-2xl font-bold">{drawnCount}</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-muted-foreground">Have Drawn</p>
-                      <p className="text-2xl font-bold">{drawnCount}</p>
-                    </div>
+                  </div>
+
+                  <div className="pt-4 border-t">
+                    <h3 className="font-medium mb-2">Re-Draw</h3>
+                    <p className="text-sm text-muted-foreground mb-3">
+                      Reset all draws to allow participants to draw again
+                    </p>
+                    <Button 
+                      variant="destructive" 
+                      onClick={handleResetDraws}
+                      className="w-full"
+                    >
+                      Reset All Draws
+                    </Button>
                   </div>
                 </div>
               </CardContent>
