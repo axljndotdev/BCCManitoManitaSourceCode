@@ -332,6 +332,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Delete Participant (Admin)
+  app.post("/api/admin/delete-participant", async (req, res) => {
+    try {
+      const { pin } = req.body;
+      
+      if (!pin) {
+        return res.status(400).json({ 
+          success: false, 
+          message: "PIN is required" 
+        });
+      }
+
+      await storage.deleteParticipant(pin);
+      res.json({ 
+        success: true, 
+        message: "Participant deleted successfully" 
+      });
+    } catch (error) {
+      console.error("Delete participant error:", error);
+      res.status(500).json({ 
+        success: false, 
+        message: "Failed to delete participant" 
+      });
+    }
+  });
+
   // Toggle Draw Enabled (Admin)
   app.post("/api/admin/toggle-draw", async (req, res) => {
     try {

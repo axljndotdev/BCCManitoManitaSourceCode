@@ -134,6 +134,38 @@ export default function Admin() {
     }
   };
 
+  const handleDelete = async (pin: string) => {
+    if (!confirm("Are you sure you want to delete this participant? They will be able to register again.")) {
+      return;
+    }
+
+    try {
+      const res = await fetch("/api/admin/delete-participant", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ pin }),
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        await fetchData();
+        toast({
+          title: "Participant Deleted",
+          description: "They can now register again if needed",
+        });
+      } else {
+        throw new Error(data.message);
+      }
+    } catch (error: any) {
+      toast({
+        title: "Delete Failed",
+        description: error.message || "Please try again",
+        variant: "destructive",
+      });
+    }
+  };
+
   const handleToggleDraw = async (enabled: boolean) => {
     try {
       const res = await fetch("/api/admin/toggle-draw", {
@@ -302,16 +334,26 @@ export default function Admin() {
                           Codename: {participant.codename} • {participant.gender}
                         </CardDescription>
                       </div>
-                      <div className="text-sm">
-                        {participant.hasDrawn ? (
-                          <span className="text-green-600 font-medium">
-                            ✓ Has Drawn
-                          </span>
-                        ) : (
-                          <span className="text-muted-foreground">
-                            Not drawn yet
-                          </span>
-                        )}
+                      <div className="flex items-center gap-2">
+                        <div className="text-sm">
+                          {participant.hasDrawn ? (
+                            <span className="text-green-600 font-medium">
+                              ✓ Has Drawn
+                            </span>
+                          ) : (
+                            <span className="text-muted-foreground">
+                              Not drawn yet
+                            </span>
+                          )}
+                        </div>
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          onClick={() => handleDelete(participant.pin)}
+                        >
+                          <UserX className="h-4 w-4 mr-1" />
+                          Delete
+                        </Button>
                       </div>
                     </div>
                   </CardHeader>

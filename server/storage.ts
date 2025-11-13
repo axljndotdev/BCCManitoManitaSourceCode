@@ -12,6 +12,7 @@ export interface IStorage {
   getApprovedParticipants(): Promise<Participant[]>;
   approveParticipant(pin: string): Promise<void>;
   rejectParticipant(pin: string): Promise<void>;
+  deleteParticipant(pin: string): Promise<void>;
   getAvailableForDraw(currentPin: string): Promise<Participant[]>;
   assignMatch(fromPin: string, toPin: string): Promise<void>;
   updateParticipant(pin: string, updates: Partial<InsertParticipant>): Promise<void>;
@@ -83,6 +84,12 @@ export class DatabaseStorage implements IStorage {
   }
 
   async rejectParticipant(pin: string): Promise<void> {
+    await db
+      .delete(participants)
+      .where(eq(participants.pin, pin));
+  }
+
+  async deleteParticipant(pin: string): Promise<void> {
     await db
       .delete(participants)
       .where(eq(participants.pin, pin));
