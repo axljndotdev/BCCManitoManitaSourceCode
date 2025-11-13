@@ -8,18 +8,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Participant Registration
   app.post("/api/register", async (req, res) => {
     try {
-      const validatedData = insertParticipantSchema.parse(req.body);
+      // Remove pin from request body as it will be generated server-side
+      const { pin, ...dataWithoutPin } = req.body;
+      const validatedData = insertParticipantSchema.omit({ pin: true }).parse(dataWithoutPin);
       
-      // Check if PIN already exists
-      const existingParticipant = await storage.getParticipantByPin(validatedData.pin);
-      if (existingParticipant) {
-        return res.status(400).json({ 
-          success: false, 
-          message: "This PIN is already taken. Please choose a different one." 
-        });
-      }
-      
-      const participant = await storage.createParticipant(validatedData);
+      const participant = await storage.createParticipant(validatedData as InsertParticipant);
       
       res.json({ 
         success: true, 

@@ -29,12 +29,12 @@ export const insertParticipantSchema = createInsertSchema(participants).omit({
   approved: true,
   hasDrawn: true,
   assignedToPin: true,
+  pin: true,
 }).extend({
   fullName: z.string().min(2, "Full name must be at least 2 characters"),
   codename: z.string().min(2, "Codename must be at least 2 characters"),
   gender: z.enum(["Male", "Female", "Other"]),
   wishlist: z.string().min(5, "Please add at least one wish item"),
-  pin: z.string().min(4, "PIN must be at least 4 characters").max(10, "PIN must not exceed 10 characters"),
 });
 
 export const loginSchema = z.object({
