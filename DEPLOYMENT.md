@@ -59,7 +59,7 @@ Render will auto-detect your `render.yaml` file. Verify these settings:
 
 - **Name:** `secret-santa-app` (or your preferred name)
 - **Environment:** `Node`
-- **Build Command:** `npm install && npm run build`
+- **Build Command:** `npm install --include=dev && npm run build`
 - **Start Command:** `npm start`
 - **Plan:** `Free`
 
