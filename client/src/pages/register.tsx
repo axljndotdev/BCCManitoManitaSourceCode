@@ -1,13 +1,35 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { insertParticipantSchema, type InsertParticipant } from "@shared/schema";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  insertParticipantSchema,
+  type InsertParticipant,
+} from "@shared/schema";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Gift, Sparkles, Copy, Check } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "wouter";
@@ -62,7 +84,7 @@ export default function Register() {
       }
 
       setRegisteredPin(result.pin);
-      
+
       toast({
         title: "Registration Successful!",
         description: "Save your PIN to login later",
@@ -83,9 +105,14 @@ export default function Register() {
         <Card className="w-full max-w-md rounded-2xl shadow-lg">
           <CardHeader className="text-center space-y-4 p-8">
             <div className="mx-auto w-20 h-20 bg-gradient-to-br from-primary/20 to-primary/10 rounded-full flex items-center justify-center">
-              <Sparkles className="w-10 h-10 text-primary" data-testid="icon-success" />
+              <Sparkles
+                className="w-10 h-10 text-primary"
+                data-testid="icon-success"
+              />
             </div>
-            <CardTitle className="text-3xl font-bold">You're Registered!</CardTitle>
+            <CardTitle className="text-3xl font-bold">
+              You're Registered!
+            </CardTitle>
             <CardDescription className="text-base">
               Save your PIN to login later
             </CardDescription>
@@ -95,7 +122,10 @@ export default function Register() {
               <p className="text-sm font-medium text-muted-foreground text-center">
                 Your PIN
               </p>
-              <div className="text-4xl font-mono font-bold text-center text-primary tracking-wider" data-testid="text-registered-pin">
+              <div
+                className="text-4xl font-mono font-bold text-center text-primary tracking-wider"
+                data-testid="text-registered-pin"
+              >
                 {registeredPin}
               </div>
               <Button
@@ -125,7 +155,11 @@ export default function Register() {
             </div>
 
             <Link href="/login">
-              <Button className="w-full h-12" size="lg" data-testid="button-go-to-login">
+              <Button
+                className="w-full h-12"
+                size="lg"
+                data-testid="button-go-to-login"
+              >
                 Go to Login
               </Button>
             </Link>
@@ -143,7 +177,9 @@ export default function Register() {
           <div className="mx-auto w-20 h-20 bg-gradient-to-br from-primary/20 to-primary/10 rounded-full flex items-center justify-center">
             <Gift className="w-10 h-10 text-primary" data-testid="icon-gift" />
           </div>
-          <CardTitle className="text-3xl font-bold">Join Manito-Manita</CardTitle>
+          <CardTitle className="text-3xl font-bold">
+            Join Manito-Manita
+          </CardTitle>
           <CardDescription className="text-base">
             Register for our church Christmas gift exchange
           </CardDescription>
@@ -178,7 +214,7 @@ export default function Register() {
                     <FormLabel>Codename</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="JoyfulStar"
+                        placeholder="Captain Awesome"
                         className="h-12"
                         {...field}
                         data-testid="input-codename"
@@ -200,14 +236,16 @@ export default function Register() {
                       defaultValue={field.value}
                     >
                       <FormControl>
-                        <SelectTrigger className="h-12" data-testid="select-gender">
+                        <SelectTrigger
+                          className="h-12"
+                          data-testid="select-gender"
+                        >
                           <SelectValue placeholder="Select gender" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
                         <SelectItem value="Male">Male</SelectItem>
                         <SelectItem value="Female">Female</SelectItem>
-                        <SelectItem value="Other">Other</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage data-testid="error-gender" />
