@@ -29,13 +29,8 @@ This guide will help you deploy your Secret Santa app **completely FREE** using 
    ```
 5. **Save this for later** - you'll need it in Step 2
 
-### 1.3 Initialize Database Schema
-1. In Neon dashboard, click **SQL Editor**
-2. Run this command to create your tables:
-   ```bash
-   npm run db:push
-   ```
-   Or manually run the migrations from your local machine with the Neon DATABASE_URL
+### 1.3 Initialize Database Schema (Do this in Step 3 after deployment)
+**Note:** You'll set up the database tables in **Step 3** after deploying to Render. Skip this for now and come back after Step 2.
 
 ---
 
@@ -85,21 +80,60 @@ In Render dashboard, go to **Environment** tab and add:
 
 ## Step 3: Initialize Your Database
 
-After deployment, you need to set up the database tables:
+After deployment, you need to create the database tables. Choose one option:
 
-### Option A: Using Local Development
-1. Set your Neon DATABASE_URL locally:
+### Option A: Using Local Development (Recommended - Easiest)
+1. First, enable the UUID extension in Neon:
+   - Go to Neon dashboard → **SQL Editor**
+   - **Make sure you're connected to the same database** from Step 1.2 (check the database name at the top)
+   - Run this command:
+     ```sql
+     CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+     ```
+   - You should see: `CREATE EXTENSION`
+
+2. On your local computer, create a `.env` file in your project root:
    ```bash
-   export DATABASE_URL="your-neon-connection-string"
+   DATABASE_URL="your-neon-connection-string-from-step-1.2"
    ```
-2. Run migrations:
+   **Important:** Don't commit this file - it's just for running migrations locally.
+
+3. Run the migration command to create tables:
    ```bash
    npm run db:push
    ```
+4. You should see: `✅ Tables created successfully`
+5. You can now delete the `.env` file (the environment variable is already set on Render)
 
-### Option B: Using Neon SQL Editor
-1. Go to Neon dashboard → SQL Editor
-2. Run the schema creation queries from `shared/schema.ts`
+### Option B: Using Neon SQL Editor (Manual)
+1. Go to Neon dashboard → **SQL Editor**
+2. First, enable the UUID extension:
+   ```sql
+   CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+   ```
+3. Then create the tables:
+   ```sql
+   CREATE TABLE participants (
+     id VARCHAR PRIMARY KEY DEFAULT gen_random_uuid(),
+     pin VARCHAR(10) NOT NULL UNIQUE,
+     full_name TEXT NOT NULL,
+     codename TEXT NOT NULL,
+     gender VARCHAR(20) NOT NULL,
+     wishlist TEXT NOT NULL,
+     approved BOOLEAN NOT NULL DEFAULT false,
+     has_drawn BOOLEAN NOT NULL DEFAULT false,
+     assigned_to_pin VARCHAR(10)
+   );
+
+   CREATE TABLE admin_settings (
+     id VARCHAR PRIMARY KEY DEFAULT 'singleton',
+     draw_enabled BOOLEAN NOT NULL DEFAULT false,
+     admin_pin VARCHAR(20) NOT NULL DEFAULT 'ADMIN-2025'
+   );
+
+   INSERT INTO admin_settings (id, draw_enabled, admin_pin) 
+   VALUES ('singleton', false, 'ADMIN-2025');
+   ```
 
 ---
 
