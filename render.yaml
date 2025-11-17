@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: secret-santa-app
+    name: BCCManitoManita25
     runtime: node
     plan: free
     buildCommand: npm install --include=dev && npm run build
