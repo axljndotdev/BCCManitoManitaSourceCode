@@ -290,6 +290,7 @@ export default function Dashboard() {
                         <Label htmlFor="edit-wishlist">Wishlist</Label>
                         <Textarea
                           id="edit-wishlist"
+                          placeholder="Enter your wishlist items here (e.g., books, gadgets, accessories, food, anything you'd like!)"
                           value={editForm.wishlist}
                           onChange={(e) => setEditForm({ ...editForm, wishlist: e.target.value })}
                           rows={4}

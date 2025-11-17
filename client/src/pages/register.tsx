@@ -223,7 +223,7 @@ export default function Register() {
                     <FormLabel>Wishlist</FormLabel>
                     <FormControl>
                       <Textarea
-                        placeholder="Bible, Coffee mug, Planner, Scarf..."
+                        placeholder="Enter your wishlist items here (e.g., books, gadgets, accessories, food, anything you'd like!)"
                         className="resize-none min-h-32"
                         rows={4}
                         {...field}
