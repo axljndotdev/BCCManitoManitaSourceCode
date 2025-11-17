@@ -1,0 +1,155 @@
+2025-11-17T06:23:44.542443255Z   dist/index.js  19.6kb
+2025-11-17T06:23:44.542447345Z 
+2025-11-17T06:23:44.542452355Z ⚡ Done in 5ms
+2025-11-17T06:23:54.421326508Z ==> Uploading build...
+2025-11-17T06:24:05.039746546Z ==> Uploaded in 6.4s. Compression took 4.2s
+2025-11-17T06:24:05.070700361Z ==> Build successful 🎉
+2025-11-17T06:24:27.223541137Z ==> Deploying...
+2025-11-17T06:24:45.175258221Z ==> Running 'npm run start'
+2025-11-17T06:24:46.269710025Z 
+2025-11-17T06:24:46.269740086Z > rest-express@1.0.0 start
+2025-11-17T06:24:46.269746996Z > NODE_ENV=production node dist/index.js
+2025-11-17T06:24:46.269750156Z 
+2025-11-17T06:24:52.761483755Z 6:24:52 AM [express] serving on port 10000
+2025-11-17T06:24:58.231751346Z ==> Your service is live 🎉
+2025-11-17T06:24:58.791322542Z ==> 
+2025-11-17T06:24:58.995946207Z ==> ///////////////////////////////////////////////////////////
+2025-11-17T06:24:59.203456571Z ==> 
+2025-11-17T06:24:59.86167953Z ==> Available at your primary URL https://bccmanitomanita25.onrender.com
+2025-11-17T06:25:00.055430365Z ==> 
+2025-11-17T06:25:00.25485224Z ==> ///////////////////////////////////////////////////////////
+2025-11-17T06:25:16.365049395Z Get participants error: TypeError: Invalid URL
+2025-11-17T06:25:16.365115116Z     at new URL (node:internal/url:818:25)
+2025-11-17T06:25:16.365125407Z     at Object.parse (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:841:225)
+2025-11-17T06:25:16.365133297Z     at parse (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:848:1)
+2025-11-17T06:25:16.365138337Z     at new ConnectionParameters (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:869:23)
+2025-11-17T06:25:16.365143527Z     at new Client (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:1226:35)
+2025-11-17T06:25:16.365148217Z     at new NeonClient (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:1570:121)
+2025-11-17T06:25:16.365152497Z     at Cn.newClient (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:1378:74)
+2025-11-17T06:25:16.365157497Z     at Cn.connect (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:1378:23)
+2025-11-17T06:25:16.365161927Z     at Cn.query (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:1407:63)
+2025-11-17T06:25:16.365166407Z     at Cn.query (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:1623:14) {
+2025-11-17T06:25:16.365171667Z   code: 'ERR_INVALID_URL',
+2025-11-17T06:25:16.365177528Z   input: "psql%20'postgresql://neondb_owner:npg_zlMTIOJ2PS5v@ep-square-sun-a11tbsnb-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require'"
+2025-11-17T06:25:16.365182588Z }
+2025-11-17T06:25:16.367229358Z 6:25:16 AM [express] GET /api/admin/participants 500 in 9ms :: {"success":false,"message":"Failed to…
+2025-11-17T06:25:16.48425757Z Get settings error: TypeError: Invalid URL
+2025-11-17T06:25:16.4842956Z     at new URL (node:internal/url:818:25)
+2025-11-17T06:25:16.48430173Z     at Object.parse (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:841:225)
+2025-11-17T06:25:16.48430599Z     at parse (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:848:1)
+2025-11-17T06:25:16.484310601Z     at new ConnectionParameters (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:869:23)
+2025-11-17T06:25:16.484314571Z     at new Client (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:1226:35)
+2025-11-17T06:25:16.484318751Z     at new NeonClient (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:1570:121)
+2025-11-17T06:25:16.484322551Z     at Cn.newClient (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:1378:74)
+2025-11-17T06:25:16.484326101Z     at Cn.connect (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:1378:23)
+2025-11-17T06:25:16.484329901Z     at Cn.query (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:1407:63)
+2025-11-17T06:25:16.484333881Z     at Cn.query (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:1623:14) {
+2025-11-17T06:25:16.484338771Z   code: 'ERR_INVALID_URL',
+2025-11-17T06:25:16.484343691Z   input: "psql%20'postgresql://neondb_owner:npg_zlMTIOJ2PS5v@ep-square-sun-a11tbsnb-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require'"
+2025-11-17T06:25:16.484363592Z }
+2025-11-17T06:25:16.485348581Z 6:25:16 AM [express] GET /api/admin/settings 500 in 2ms :: {"success":false,"message":"Failed to get…
+2025-11-17T06:25:38.527103124Z Registration error: TypeError: Invalid URL
+2025-11-17T06:25:38.527139705Z     at new URL (node:internal/url:818:25)
+2025-11-17T06:25:38.527144985Z     at Object.parse (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:841:225)
+2025-11-17T06:25:38.527148815Z     at parse (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:848:1)
+2025-11-17T06:25:38.527153095Z     at new ConnectionParameters (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:869:23)
+2025-11-17T06:25:38.527156555Z     at new Client (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:1226:35)
+2025-11-17T06:25:38.527160035Z     at new NeonClient (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:1570:121)
+2025-11-17T06:25:38.527163855Z     at Cn.newClient (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:1378:74)
+2025-11-17T06:25:38.527167355Z     at Cn.connect (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:1378:23)
+2025-11-17T06:25:38.527170786Z     at Cn.query (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:1407:63)
+2025-11-17T06:25:38.527174326Z     at Cn.query (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:1623:14) {
+2025-11-17T06:25:38.527178686Z   code: 'ERR_INVALID_URL',
+2025-11-17T06:25:38.527184736Z   input: "psql%20'postgresql://neondb_owner:npg_zlMTIOJ2PS5v@ep-square-sun-a11tbsnb-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require'"
+2025-11-17T06:25:38.527190836Z }
+2025-11-17T06:25:38.527844559Z 6:25:38 AM [express] POST /api/register 500 in 3ms :: {"success":false,"message":"Registration faile…
+2025-11-17T06:25:38.527103124Z Registration error: TypeError: Invalid URL
+2025-11-17T06:25:38.527139705Z     at new URL (node:internal/url:818:25)
+2025-11-17T06:25:38.527144985Z     at Object.parse (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:841:225)
+2025-11-17T06:25:38.527148815Z     at parse (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:848:1)
+2025-11-17T06:25:38.527153095Z     at new ConnectionParameters (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:869:23)
+2025-11-17T06:25:38.527156555Z     at new Client (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:1226:35)
+2025-11-17T06:25:38.527160035Z     at new NeonClient (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:1570:121)
+2025-11-17T06:25:38.527163855Z     at Cn.newClient (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:1378:74)
+2025-11-17T06:25:38.527167355Z     at Cn.connect (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:1378:23)
+2025-11-17T06:25:38.527170786Z     at Cn.query (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:1407:63)
+2025-11-17T06:25:38.527174326Z     at Cn.query (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:1623:14) {
+2025-11-17T06:25:38.527178686Z   code: 'ERR_INVALID_URL',
+2025-11-17T06:25:38.527184736Z   input: "psql%20'postgresql://neondb_owner:npg_zlMTIOJ2PS5v@ep-square-sun-a11tbsnb-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require'"
+2025-11-17T06:25:38.527190836Z }
+2025-11-17T06:25:38.527844559Z 6:25:38 AM [express] POST /api/register 500 in 3ms :: {"success":false,"message":"Registration faile…
+2025-11-17T06:25:53.370589051Z Registration error: TypeError: Invalid URL
+2025-11-17T06:25:53.370617982Z     at new URL (node:internal/url:818:25)
+2025-11-17T06:25:53.370622712Z     at Object.parse (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:841:225)
+2025-11-17T06:25:53.370625742Z     at parse (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:848:1)
+2025-11-17T06:25:53.370629182Z     at new ConnectionParameters (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:869:23)
+2025-11-17T06:25:53.370631962Z     at new Client (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:1226:35)
+2025-11-17T06:25:53.370635102Z     at new NeonClient (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:1570:121)
+2025-11-17T06:25:53.370637932Z     at Cn.newClient (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:1378:74)
+2025-11-17T06:25:53.370640832Z     at Cn.connect (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:1378:23)
+2025-11-17T06:25:53.370643592Z     at Cn.query (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:1407:63)
+2025-11-17T06:25:53.370646442Z     at Cn.query (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:1623:14) {
+2025-11-17T06:25:53.370649913Z   code: 'ERR_INVALID_URL',
+2025-11-17T06:25:53.370653622Z   input: "psql%20'postgresql://neondb_owner:npg_zlMTIOJ2PS5v@ep-square-sun-a11tbsnb-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require'"
+2025-11-17T06:25:53.370656453Z }
+2025-11-17T06:25:53.371286785Z 6:25:53 AM [express] POST /api/register 500 in 1ms :: {"success":false,"message":"Registration faile…
+2025-11-17T06:26:12.212205302Z Registration error: TypeError: Invalid URL
+2025-11-17T06:26:12.212229762Z     at new URL (node:internal/url:818:25)
+2025-11-17T06:26:12.212236872Z     at Object.parse (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:841:225)
+2025-11-17T06:26:12.212242102Z     at parse (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:848:1)
+2025-11-17T06:26:12.212247372Z     at new ConnectionParameters (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:869:23)
+2025-11-17T06:26:12.212251842Z     at new Client (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:1226:35)
+2025-11-17T06:26:12.212256303Z     at new NeonClient (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:1570:121)
+2025-11-17T06:26:12.212260583Z     at Cn.newClient (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:1378:74)
+2025-11-17T06:26:12.212265183Z     at Cn.connect (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:1378:23)
+2025-11-17T06:26:12.212269463Z     at Cn.query (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:1407:63)
+2025-11-17T06:26:12.212273913Z     at Cn.query (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:1623:14) {
+2025-11-17T06:26:12.212278723Z   code: 'ERR_INVALID_URL',
+2025-11-17T06:26:12.212283983Z   input: "psql%20'postgresql://neondb_owner:npg_zlMTIOJ2PS5v@ep-square-sun-a11tbsnb-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require'"
+2025-11-17T06:26:12.212287943Z }
+2025-11-17T06:26:12.212937786Z 6:26:12 AM [express] POST /api/register 500 in 2ms :: {"success":false,"message":"Registration faile…
+2025-11-17T06:26:19.470639087Z Get participants error: TypeError: Invalid URL
+2025-11-17T06:26:19.470663227Z     at new URL (node:internal/url:818:25)
+2025-11-17T06:26:19.470669777Z     at Object.parse (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:841:225)
+2025-11-17T06:26:19.470673838Z     at parse (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:848:1)
+2025-11-17T06:26:19.470690148Z     at new ConnectionParameters (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:869:23)
+2025-11-17T06:26:19.470694058Z     at new Client (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:1226:35)
+2025-11-17T06:26:19.470697648Z     at new NeonClient (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:1570:121)
+2025-11-17T06:26:19.470701248Z     at Cn.newClient (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:1378:74)
+2025-11-17T06:26:19.470704888Z     at Cn.connect (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:1378:23)
+2025-11-17T06:26:19.470708328Z     at Cn.query (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:1407:63)
+2025-11-17T06:26:19.470711868Z     at Cn.query (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:1623:14) {
+2025-11-17T06:26:19.470716998Z   code: 'ERR_INVALID_URL',
+2025-11-17T06:26:19.470722198Z   input: "psql%20'postgresql://neondb_owner:npg_zlMTIOJ2PS5v@ep-square-sun-a11tbsnb-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require'"
+2025-11-17T06:26:19.470725728Z }
+2025-11-17T06:26:19.471594136Z 6:26:19 AM [express] GET /api/admin/participants 500 in 2ms :: {"success":false,"message":"Failed to…
+2025-11-17T06:26:19.629255553Z Get settings error: TypeError: Invalid URL
+2025-11-17T06:26:19.629276674Z     at new URL (node:internal/url:818:25)
+2025-11-17T06:26:19.629292774Z     at Object.parse (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:841:225)
+2025-11-17T06:26:19.629296444Z     at parse (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:848:1)
+2025-11-17T06:26:19.629299874Z     at new ConnectionParameters (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:869:23)
+2025-11-17T06:26:19.629302664Z     at new Client (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:1226:35)
+2025-11-17T06:26:19.629305754Z     at new NeonClient (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:1570:121)
+2025-11-17T06:26:19.629308604Z     at Cn.newClient (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:1378:74)
+2025-11-17T06:26:19.629311614Z     at Cn.connect (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:1378:23)
+2025-11-17T06:26:19.629314494Z     at Cn.query (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:1407:63)
+2025-11-17T06:26:19.629317265Z     at Cn.query (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:1623:14) {
+2025-11-17T06:26:19.629320755Z   code: 'ERR_INVALID_URL',
+2025-11-17T06:26:19.629323825Z   input: "psql%20'postgresql://neondb_owner:npg_zlMTIOJ2PS5v@ep-square-sun-a11tbsnb-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require'"
+2025-11-17T06:26:19.629326525Z }
+2025-11-17T06:26:19.630065249Z 6:26:19 AM [express] GET /api/admin/settings 500 in 1ms :: {"success":false,"message":"Failed to get…
+2025-11-17T06:27:00.614824781Z Registration error: TypeError: Invalid URL
+2025-11-17T06:27:00.614858141Z     at new URL (node:internal/url:818:25)
+2025-11-17T06:27:00.614864891Z     at Object.parse (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:841:225)
+2025-11-17T06:27:00.614868771Z     at parse (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:848:1)
+2025-11-17T06:27:00.614874942Z     at new ConnectionParameters (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:869:23)
+2025-11-17T06:27:00.614878482Z     at new Client (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:1226:35)
+2025-11-17T06:27:00.614882182Z     at new NeonClient (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:1570:121)
+2025-11-17T06:27:00.614885772Z     at Cn.newClient (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:1378:74)
+2025-11-17T06:27:00.614889242Z     at Cn.connect (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:1378:23)
+2025-11-17T06:27:00.614892962Z     at Cn.query (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:1407:63)
+2025-11-17T06:27:00.614896452Z     at Cn.query (file:///opt/render/project/src/node_modules/@neondatabase/serverless/index.mjs:1623:14) {
+2025-11-17T06:27:00.614902482Z   code: 'ERR_INVALID_URL',
+2025-11-17T06:27:00.614907602Z   input: "psql%20'postgresql://neondb_owner:npg_zlMTIOJ2PS5v@ep-square-sun-a11tbsnb-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require'"
+2025-11-17T06:27:00.614911282Z }
+2025-11-17T06:27:00.615569365Z 6:27:00 AM [express] POST /api/register 500 in 2ms :: {"success":false,"message":"Registration faile…
